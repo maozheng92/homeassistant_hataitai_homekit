@@ -99,7 +99,8 @@ class SnapshotTests(unittest.TestCase):
         self.assertFalse(snap["is_opening"])
         self.assertTrue(snap["is_closing"])
         self.assertFalse(snap["is_closed"])
-        self.assertEqual(snap["supported_features"], 11)
+        self.assertEqual(snap["supported_features"], 15)
+        self.assertFalse(snap["source_has_set_position"])
 
     def test_source_closed_is_inverted_open(self) -> None:
         snap = invert.inverted_cover_snapshot(
@@ -119,7 +120,8 @@ class SnapshotTests(unittest.TestCase):
 
     def test_default_features_when_missing(self) -> None:
         snap = invert.inverted_cover_snapshot("open", {})
-        self.assertEqual(snap["supported_features"], 1 | 2 | 8)
+        self.assertEqual(snap["supported_features"], 1 | 2 | 4 | 8)
+        self.assertFalse(snap["source_has_set_position"])
 
     def test_unavailable(self) -> None:
         snap = invert.inverted_cover_snapshot("unavailable", {})
@@ -129,6 +131,70 @@ class SnapshotTests(unittest.TestCase):
     def test_button_mapping(self) -> None:
         self.assertEqual(invert.inverted_service_for_open(), "close_cover")
         self.assertEqual(invert.inverted_service_for_close(), "open_cover")
+
+    def test_source_set_position_flag(self) -> None:
+        with_set = invert.inverted_cover_snapshot(
+            "open", {"current_position": 40, "supported_features": 15}
+        )
+        self.assertTrue(with_set["source_has_set_position"])
+        self.assertEqual(with_set["supported_features"], 15)
+
+
+class PositionSeekTests(unittest.TestCase):
+    def test_start_opening_toward_higher_percent(self) -> None:
+        self.assertEqual(
+            invert.position_seek_action(10, 75), invert.ACTION_OPEN
+        )
+
+    def test_start_closing_toward_lower_percent(self) -> None:
+        self.assertEqual(
+            invert.position_seek_action(80, 25), invert.ACTION_CLOSE
+        )
+
+    def test_wait_while_already_opening(self) -> None:
+        self.assertIsNone(
+            invert.position_seek_action(40, 75, is_opening=True)
+        )
+
+    def test_reverse_if_moving_the_wrong_way(self) -> None:
+        self.assertEqual(
+            invert.position_seek_action(40, 75, is_closing=True),
+            invert.ACTION_OPEN,
+        )
+
+    def test_stop_inside_deadzone_while_moving(self) -> None:
+        self.assertEqual(
+            invert.position_seek_action(74, 75, is_opening=True),
+            invert.ACTION_STOP,
+        )
+        self.assertIsNone(invert.position_seek_action(74, 75))
+
+    def test_stop_on_overshoot(self) -> None:
+        self.assertEqual(
+            invert.position_seek_action(77, 75, is_opening=True),
+            invert.ACTION_STOP,
+        )
+        self.assertEqual(
+            invert.position_seek_action(23, 25, is_closing=True),
+            invert.ACTION_STOP,
+        )
+
+    def test_full_open_and_close_run_to_the_end(self) -> None:
+        self.assertEqual(invert.position_seek_action(10, 100), invert.ACTION_OPEN)
+        self.assertIsNone(
+            invert.position_seek_action(97, 100, is_opening=True)
+        )
+        self.assertEqual(invert.position_seek_action(90, 0), invert.ACTION_CLOSE)
+        self.assertIsNone(
+            invert.position_seek_action(3, 0, is_closing=True)
+        )
+
+    def test_no_target_does_nothing(self) -> None:
+        self.assertIsNone(invert.position_seek_action(40, None))
+
+    def test_unknown_position_uses_open_or_close(self) -> None:
+        self.assertEqual(invert.position_seek_action(None, 80), invert.ACTION_OPEN)
+        self.assertEqual(invert.position_seek_action(None, 10), invert.ACTION_CLOSE)
 
 
 class DiscoveryTests(unittest.TestCase):

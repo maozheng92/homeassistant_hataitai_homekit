@@ -32,6 +32,14 @@ FEATURE_STOP = 8
 INVERTIBLE_FEATURES = (
     FEATURE_OPEN | FEATURE_CLOSE | FEATURE_SET_POSITION | FEATURE_STOP
 )
+ALWAYS_ON_FEATURES = (
+    FEATURE_OPEN | FEATURE_CLOSE | FEATURE_STOP | FEATURE_SET_POSITION
+)
+
+ACTION_OPEN = "open"
+ACTION_CLOSE = "close"
+ACTION_STOP = "stop"
+POSITION_DEADZONE = 5
 
 
 def invert_position(position: int | float | None) -> int | None:
@@ -81,10 +89,63 @@ def invert_is_closed(
 
 
 def invert_supported_features(features: int | None) -> int:
-    """Keep only open/close/stop/set-position bits from the source cover."""
-    if features is None:
-        return FEATURE_OPEN | FEATURE_CLOSE | FEATURE_STOP
-    return int(features) & INVERTIBLE_FEATURES
+    """Expose open/close/stop plus a position slider.
+
+    D10-ZM has no writable target-position, so Xiaomi Home often omits
+    ``SET_POSITION``. The helper still advertises it and emulates the
+    slider with motor up/down plus current-position feedback.
+    """
+    copied = 0 if features is None else int(features) & INVERTIBLE_FEATURES
+    return copied | ALWAYS_ON_FEATURES
+
+
+def source_has_set_position(features: int | None) -> bool:
+    """Return True if the Xiaomi cover can take ``cover.set_cover_position``."""
+    if not features:
+        return False
+    return bool(int(features) & FEATURE_SET_POSITION)
+
+
+def position_seek_action(
+    current: int | None,
+    target: int | None,
+    *,
+    is_opening: bool = False,
+    is_closing: bool = False,
+    deadzone: int = POSITION_DEADZONE,
+) -> str | None:
+    """Choose the next inverted-cover motor action while seeking a percent.
+
+    Returns ``open``, ``close``, ``stop``, or ``None`` to keep waiting.
+    Targets 0 and 100 run to the mechanical end and are not auto-stopped
+    at the deadzone, so the rack can fully raise or lower.
+    """
+    if target is None:
+        return None
+    try:
+        target = max(0, min(100, int(target)))
+    except (TypeError, ValueError):
+        return None
+
+    if current is None:
+        if target >= 50:
+            return None if is_opening else ACTION_OPEN
+        return None if is_closing else ACTION_CLOSE
+
+    if target >= 100:
+        if current >= 100:
+            return ACTION_STOP if (is_opening or is_closing) else None
+        return None if is_opening else ACTION_OPEN
+    if target <= 0:
+        if current <= 0:
+            return ACTION_STOP if (is_opening or is_closing) else None
+        return None if is_closing else ACTION_CLOSE
+
+    if abs(current - target) <= deadzone:
+        return ACTION_STOP if (is_opening or is_closing) else None
+    if target > current:
+        return None if is_opening else ACTION_OPEN
+    return None if is_closing else ACTION_CLOSE
 
 
 def inverted_cover_snapshot(source_state: str | None, attributes: dict[str, Any] | None) -> dict[str, Any]:
@@ -95,13 +156,15 @@ def inverted_cover_snapshot(source_state: str | None, attributes: dict[str, Any]
     is_opening, is_closing = invert_motion(source_state)
     unavailable = source_state in {None, STATE_UNAVAILABLE, STATE_UNKNOWN}
 
+    raw_features = attrs.get(ATTR_SUPPORTED_FEATURES)
     return {
         "available": not unavailable,
         "current_position": inverted_pos,
         "is_opening": is_opening if not unavailable else None,
         "is_closing": is_closing if not unavailable else None,
         "is_closed": invert_is_closed(source_state, inverted_pos) if not unavailable else None,
-        "supported_features": invert_supported_features(attrs.get(ATTR_SUPPORTED_FEATURES)),
+        "supported_features": invert_supported_features(raw_features),
+        "source_has_set_position": source_has_set_position(raw_features),
         "device_class": attrs.get("device_class") or "blind",
     }
 
