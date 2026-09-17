@@ -1,7 +1,7 @@
-"""Hotata Airer D10-ZM helper for Home Assistant.
+"""Hotata Airer D10-ZM integration for Home Assistant.
 
-Wraps the Xiaomi Home cover for 好太太晾衣架 D10-ZM and inverts
-up/down commands, open/close state, and position percentage.
+Creates a device that wraps the Xiaomi Home cover for 好太太晾衣架 D10-ZM
+and inverts up/down commands, open/close state, and position percentage.
 """
 
 from __future__ import annotations

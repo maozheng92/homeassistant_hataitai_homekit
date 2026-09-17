@@ -1,6 +1,6 @@
 # 好太太晾衣架 D10-ZM
 
-Home Assistant 自定义集成：根据 [Xiaomi Home](https://github.com/XiaoMi/ha_xiaomi_home) 里的 **好太太晾衣架 D10-ZM**（`hotata.airer.d10zm`）再创建一个方向校正后的窗帘实体。米家原始实体不会被隐藏或改动。
+Home Assistant 自定义集成：根据 [Xiaomi Home](https://github.com/XiaoMi/ha_xiaomi_home) 里的 **好太太晾衣架 D10-ZM**（`hotata.airer.d10zm`）创建一个独立设备，上面是方向校正后的窗帘实体。米家原始设备与实体不会被隐藏或改动。
 
 米家把晾衣架映射成 Cover（百叶/窗帘）后，常见现象是：
 
@@ -9,7 +9,7 @@ Home Assistant 自定义集成：根据 [Xiaomi Home](https://github.com/XiaoMi/
 - 开合状态相反（全开显示成全关）
 - 位置百分比相反（0% 和 100% 对调）
 
-本集成会另建一个反向窗帘实体：
+本集成会在 **设置 → 设备与服务 → 设备** 中新增一台设备（名称带「反向」），而不是出现在辅助元素里：
 
 | 操作 / 状态 | 米家原实体 | 本集成实体 |
 | --- | --- | --- |
@@ -30,7 +30,7 @@ Home Assistant 自定义集成：根据 [Xiaomi Home](https://github.com/XiaoMi/
 5. 前往 **设置 → 设备与服务 → 添加集成**，搜索 **Hotata Airer D10-ZM** / **好太太晾衣架 D10-ZM**。
 6. 选择米家里 D10-ZM 对应的窗帘实体（配置流程会优先匹配该型号）。
 
-灯、故障等其它米家实体不会改动。新实体名称默认为 **晾衣架（反向）**，方便和原窗帘区分。
+若之前已经添加过本集成，更新后请重载一次，它会从「辅助元素」变成独立设备。
 
 ## 要求
 
@@ -38,4 +38,4 @@ Home Assistant 自定义集成：根据 [Xiaomi Home](https://github.com/XiaoMi/
 - 已配置 Xiaomi Home 自定义集成
 - 设备型号 `hotata.airer.d10zm`（好太太晾衣架 D10-ZM）
 
-D10-ZM 规格里没有可写的目标开合度。反向实体仍会打开 Home Assistant 的百分比滑块：若米家原实体支持 `set_cover_position`，则把目标取反后转发；否则根据当前位置驱动上升/下降，接近目标后自动暂停。全开（100%）和全关（0%）会一直走到限位。中间档位依赖设备上报的当前位置，可能和设定值有几个百分点偏差。
+D10-ZM 规格里没有可写的目标开合度。反向设备上的窗帘仍会打开 Home Assistant 的百分比滑块：若米家原实体支持 `set_cover_position`，则把目标取反后转发；否则根据当前位置驱动上升/下降，接近目标后自动暂停。全开（100%）和全关（0%）会一直走到限位。中间档位依赖设备上报的当前位置，可能和设定值有几个百分点偏差。

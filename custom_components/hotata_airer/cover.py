@@ -20,11 +20,11 @@ from homeassistant.const import (
     SERVICE_STOP_COVER,
 )
 from homeassistant.core import Event, HomeAssistant, callback
-from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event
 
 from . import source_entity_id
+from .device import device_info_for_source
 from .invert import (
     ACTION_CLOSE,
     ACTION_OPEN,
@@ -57,7 +57,6 @@ class InvertedHotataCover(CoverEntity):
     _attr_should_poll = False
     _attr_has_entity_name = True
     _attr_icon = "mdi:hanger"
-    _attr_translation_key = "airer"
     _attr_name = None
 
     def __init__(
@@ -80,9 +79,12 @@ class InvertedHotataCover(CoverEntity):
         self._source_has_set_position = False
         self._seek_in_flight = False
         self._last_seek_action: str | None = None
+        self._attr_device_info = device_info_for_source(
+            hass, entry, source_entity_id
+        )
 
     async def async_added_to_hass(self) -> None:
-        """Subscribe to the Xiaomi cover and attach to the same device."""
+        """Subscribe to the Xiaomi cover."""
 
         @callback
         def _on_source_change(event: Event | None = None) -> None:
@@ -96,13 +98,6 @@ class InvertedHotataCover(CoverEntity):
             )
         )
         self._apply_source_state()
-
-        registry = er.async_get(self.hass)
-        source = registry.async_get(self._source_entity_id)
-        if source and source.device_id and registry.async_get(self.entity_id):
-            registry.async_update_entity(
-                self.entity_id, device_id=source.device_id
-            )
 
     @callback
     def _apply_source_state(self) -> None:

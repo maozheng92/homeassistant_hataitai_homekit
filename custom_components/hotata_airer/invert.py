@@ -6,7 +6,7 @@ Xiaomi Home maps 好太太 D10-ZM (`hotata.airer.d10zm`) as a cover:
 - motor ``down`` (下降) → HA ``close``
 - position 0 → closed, 100 → open
 
-On this device those mappings are reversed. This helper swaps open/close
+On this device those mappings are reversed. This integration swaps open/close
 commands, opening/closing motion, the closed state, and the 0–100 position.
 """
 
@@ -92,7 +92,7 @@ def invert_supported_features(features: int | None) -> int:
     """Expose open/close/stop plus a position slider.
 
     D10-ZM has no writable target-position, so Xiaomi Home often omits
-    ``SET_POSITION``. The helper still advertises it and emulates the
+    ``SET_POSITION``. The integration still advertises it and emulates the
     slider with motor up/down plus current-position feedback.
     """
     copied = 0 if features is None else int(features) & INVERTIBLE_FEATURES

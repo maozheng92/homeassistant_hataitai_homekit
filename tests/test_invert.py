@@ -231,5 +231,22 @@ class DiscoveryTests(unittest.TestCase):
         self.assertEqual(found[0].platform, "xiaomi_home")
 
 
+class DeviceNameTests(unittest.TestCase):
+    def test_appends_inverted_suffix(self) -> None:
+        const = sys.modules["hotata_airer.const"]
+        self.assertEqual(const.inverted_device_name("客厅晾衣架"), "客厅晾衣架（反向）")
+
+    def test_default_name(self) -> None:
+        const = sys.modules["hotata_airer.const"]
+        self.assertEqual(const.inverted_device_name(None), "好太太晾衣架 D10-ZM（反向）")
+
+    def test_does_not_double_suffix(self) -> None:
+        const = sys.modules["hotata_airer.const"]
+        self.assertEqual(
+            const.inverted_device_name("客厅晾衣架（反向）"),
+            "客厅晾衣架（反向）",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
