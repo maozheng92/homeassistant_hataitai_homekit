@@ -1,0 +1,13 @@
+{
+  "domain": "hotata_airer",
+  "name": "Hotata Airer D10-ZM",
+  "after_dependencies": ["xiaomi_home"],
+  "codeowners": ["@maozheng92"],
+  "config_flow": true,
+  "documentation": "https://github.com/maozheng92/homeassistant_hataitai_homekit",
+  "integration_type": "helper",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/maozheng92/homeassistant_hataitai_homekit/issues",
+  "requirements": [],
+  "version": "1.0.0"
+}
