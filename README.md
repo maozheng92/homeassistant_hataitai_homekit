@@ -16,7 +16,7 @@ Home Assistant 自定义集成：根据 [Xiaomi Home](https://github.com/XiaoMi/
 | 上升键（open） | `cover.open_cover` | 改为调用 `cover.close_cover` |
 | 下降键（close） | `cover.close_cover` | 改为调用 `cover.open_cover` |
 | 暂停 | `cover.stop_cover` | 原样转发 |
-| 位置百分比 | `current_position` | `100 - current_position` |
+| 位置百分比 | `current_position` | `100 - current_position`，并提供滑块 / 0% 25% 75% 100% |
 | 上升中 | `opening` | 显示为 `closing` |
 | 下降中 | `closing` | 显示为 `opening` |
 | 全关 / 全开 | 位置 0 / 100 | 对调 |
@@ -38,4 +38,4 @@ Home Assistant 自定义集成：根据 [Xiaomi Home](https://github.com/XiaoMi/
 - 已配置 Xiaomi Home 自定义集成
 - 设备型号 `hotata.airer.d10zm`（好太太晾衣架 D10-ZM）
 
-D10-ZM 规格里只有上升 / 下降 / 暂停和当前位置，没有目标开合度，因此中间百分比通常只能显示、不能精确停在某一档。这是设备限制，不是本集成额外限制。
+D10-ZM 规格里没有可写的目标开合度。反向实体仍会打开 Home Assistant 的百分比滑块：若米家原实体支持 `set_cover_position`，则把目标取反后转发；否则根据当前位置驱动上升/下降，接近目标后自动暂停。全开（100%）和全关（0%）会一直走到限位。中间档位依赖设备上报的当前位置，可能和设定值有几个百分点偏差。
