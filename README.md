@@ -1,6 +1,6 @@
-# 好太太晾衣架 D10-ZM HomeKit
+# 好太太晾衣架 D10-ZM
 
-Home Assistant 自定义集成：把 [Xiaomi Home](https://github.com/XiaoMi/ha_xiaomi_home) 里的 **好太太晾衣架 D10-ZM**（`hotata.airer.d10zm`）窗帘实体方向校正后再给 HomeKit / 仪表盘使用。
+Home Assistant 自定义集成：根据 [Xiaomi Home](https://github.com/XiaoMi/ha_xiaomi_home) 里的 **好太太晾衣架 D10-ZM**（`hotata.airer.d10zm`）再创建一个方向校正后的窗帘实体。米家原始实体不会被隐藏或改动。
 
 米家把晾衣架映射成 Cover（百叶/窗帘）后，常见现象是：
 
@@ -9,7 +9,7 @@ Home Assistant 自定义集成：把 [Xiaomi Home](https://github.com/XiaoMi/ha_
 - 开合状态相反（全开显示成全关）
 - 位置百分比相反（0% 和 100% 对调）
 
-本集成会包一层反向窗帘实体：
+本集成会另建一个反向窗帘实体：
 
 | 操作 / 状态 | 米家原实体 | 本集成实体 |
 | --- | --- | --- |
@@ -21,8 +21,6 @@ Home Assistant 自定义集成：把 [Xiaomi Home](https://github.com/XiaoMi/ha_
 | 下降中 | `closing` | 显示为 `opening` |
 | 全关 / 全开 | 位置 0 / 100 | 对调 |
 
-默认会隐藏米家原始窗帘实体，并把原先暴露给 HomeKit 的设置挪到新实体上，避免桥接里出现两个方向相反的晾衣架。
-
 ## 安装
 
 1. 确认已安装并登录 **Xiaomi Home（米家）** 集成，且 D10-ZM 已出现窗帘实体。
@@ -32,13 +30,7 @@ Home Assistant 自定义集成：把 [Xiaomi Home](https://github.com/XiaoMi/ha_
 5. 前往 **设置 → 设备与服务 → 添加集成**，搜索 **Hotata Airer D10-ZM** / **好太太晾衣架 D10-ZM**。
 6. 选择米家里 D10-ZM 对应的窗帘实体（配置流程会优先匹配该型号）。
 
-## HomeKit
-
-1. 在本集成里保持「隐藏米家原始窗帘实体」开启。
-2. 将新的窗帘实体暴露给 **HomeKit Bridge**（若原实体已经暴露，集成会尽量把暴露开关一并迁移过来）。
-3. 若 iPhone 家庭 App 里还是旧配件，重载一次 HomeKit 桥接，或从桥接中排除米家原窗帘、只包含校正后的实体。
-
-灯、故障等其它米家实体不会改动，仍留在原设备上。
+灯、故障等其它米家实体不会改动。新实体名称默认为 **晾衣架（反向）**，方便和原窗帘区分。
 
 ## 要求
 

@@ -8,23 +8,9 @@
     "step": {
       "user": {
         "title": "校正好太太 D10-ZM",
-        "description": "选择 Xiaomi Home 中 {model} 对应的窗帘实体。本集成会把下降键改成上升、上升键改成下降，并颠倒开合状态与百分比，以便 HomeKit 和 Home Assistant 的窗帘控件方向正确。",
+        "description": "选择 Xiaomi Home 中 {model} 对应的窗帘实体。本集成会另外创建一个窗帘实体：下降键改成上升、上升键改成下降，并颠倒开合状态与百分比。米家原始实体保持不变。",
         "data": {
-          "entity_id": "米家窗帘实体",
-          "hide_source": "隐藏米家原始窗帘实体"
-        },
-        "data_description": {
-          "hide_source": "建议开启。隐藏原实体后，HomeKit 桥接只会暴露校正后的晾衣架。"
-        }
-      }
-    }
-  },
-  "options": {
-    "step": {
-      "init": {
-        "title": "好太太晾衣架选项",
-        "data": {
-          "hide_source": "隐藏米家原始窗帘实体"
+          "entity_id": "米家窗帘实体"
         }
       }
     }
@@ -32,7 +18,7 @@
   "entity": {
     "cover": {
       "airer": {
-        "name": "晾衣架"
+        "name": "晾衣架（反向）"
       }
     }
   }

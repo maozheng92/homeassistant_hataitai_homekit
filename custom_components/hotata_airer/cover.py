@@ -24,8 +24,7 @@ from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event
 
-from . import _copy_expose_settings, _source_entity_id
-from .const import DOMAIN
+from . import source_entity_id
 from .invert import inverted_cover_snapshot
 
 
@@ -35,8 +34,9 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the inverted D10-ZM cover."""
-    source_entity_id = _source_entity_id(hass, entry)
-    async_add_entities([InvertedHotataCover(hass, entry, source_entity_id)])
+    async_add_entities(
+        [InvertedHotataCover(hass, entry, source_entity_id(hass, entry))]
+    )
 
 
 class InvertedHotataCover(CoverEntity):
@@ -55,31 +55,11 @@ class InvertedHotataCover(CoverEntity):
         source_entity_id: str,
     ) -> None:
         self.hass = hass
-        self._entry = entry
         self._source_entity_id = source_entity_id
         self._attr_unique_id = entry.entry_id
         self._attr_device_class = CoverDeviceClass.BLIND
         self._attr_supported_features = (
             CoverEntityFeature.OPEN | CoverEntityFeature.CLOSE | CoverEntityFeature.STOP
-        )
-        self._is_new_entity = True
-        self._copy_name_from_source()
-
-    def _copy_name_from_source(self) -> None:
-        registry = er.async_get(self.hass)
-        source = registry.async_get(self._source_entity_id)
-        if source is None:
-            self._attr_name = "晾衣架"
-            self._is_new_entity = True
-            return
-        self._attr_has_entity_name = bool(source.has_entity_name)
-        if source.original_name:
-            self._attr_name = source.original_name
-        elif not source.has_entity_name:
-            self._attr_name = self._entry.title
-        self._is_new_entity = (
-            registry.async_get_entity_id(COVER_DOMAIN, DOMAIN, self._attr_unique_id)
-            is None
         )
 
     async def async_added_to_hass(self) -> None:
@@ -103,11 +83,6 @@ class InvertedHotataCover(CoverEntity):
             registry.async_update_entity(
                 self.entity_id, device_id=source.device_id
             )
-            if source.name:
-                registry.async_update_entity(self.entity_id, name=source.name)
-
-        if self._is_new_entity:
-            _copy_expose_settings(self.hass, self._source_entity_id, self.entity_id)
 
     @callback
     def _apply_source_state(self) -> None:

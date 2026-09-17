@@ -1,9 +1,9 @@
-"""Invert Xiaomi Home airer cover semantics for HomeKit/HA.
+"""Invert Xiaomi Home airer cover semantics.
 
 Xiaomi Home maps 好太太 D10-ZM (`hotata.airer.d10zm`) as a cover:
 
-- motor ``up`` (上升) → HA ``open`` / HomeKit up
-- motor ``down`` (下降) → HA ``close`` / HomeKit down
+- motor ``up`` (上升) → HA ``open``
+- motor ``down`` (下降) → HA ``close``
 - position 0 → closed, 100 → open
 
 On this device those mappings are reversed. This helper swaps open/close
