@@ -1,0 +1,39 @@
+{
+  "title": "Hotata Airer D10-ZM",
+  "config": {
+    "abort": {
+      "already_configured": "This Xiaomi Home cover is already inverted.",
+      "no_xiaomi_covers": "No Xiaomi Home cover entities were found. Add the D10-ZM in the Xiaomi Home integration first."
+    },
+    "step": {
+      "user": {
+        "title": "Invert Hotata D10-ZM",
+        "description": "Pick the Xiaomi Home cover for {model}. This helper swaps the up/down keys and inverts open/close state plus position percent, which is what HomeKit and the Home Assistant cover UI expect.",
+        "data": {
+          "entity_id": "Xiaomi Home cover",
+          "hide_source": "Hide the original Xiaomi cover"
+        },
+        "data_description": {
+          "hide_source": "Recommended. Hides the original entity so HomeKit Bridge only exposes the inverted cover."
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Hotata Airer options",
+        "data": {
+          "hide_source": "Hide the original Xiaomi cover"
+        }
+      }
+    }
+  },
+  "entity": {
+    "cover": {
+      "airer": {
+        "name": "Clothes airer"
+      }
+    }
+  }
+}
