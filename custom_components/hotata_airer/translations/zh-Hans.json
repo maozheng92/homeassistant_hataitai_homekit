@@ -2,13 +2,13 @@
   "title": "好太太晾衣架 D10-ZM",
   "config": {
     "abort": {
-      "already_configured": "该米家窗帘实体已经创建过反向实体。",
+      "already_configured": "该米家窗帘实体已经创建过反向设备。",
       "no_xiaomi_covers": "没有找到 Xiaomi Home 的窗帘实体。请先在米家集成中添加好太太晾衣架 D10-ZM。"
     },
     "step": {
       "user": {
         "title": "校正好太太 D10-ZM",
-        "description": "选择 Xiaomi Home 中 {model} 对应的窗帘实体。本集成会另外创建一个窗帘实体：下降键改成上升、上升键改成下降，并颠倒开合状态与百分比。米家原始实体保持不变。",
+        "description": "选择 Xiaomi Home 中 {model} 对应的窗帘实体。本集成会创建一个独立设备，带反向窗帘：下降键改成上升、上升键改成下降，并颠倒开合状态与百分比。米家原始实体保持不变。",
         "data": {
           "entity_id": "米家窗帘实体"
         }
