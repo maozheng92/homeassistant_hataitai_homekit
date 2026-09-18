@@ -34,7 +34,7 @@ Home Assistant 自定义集成：根据 [Xiaomi Home](https://github.com/XiaoMi/
 
 1. 先在辅助元素里 **删除** 旧条目。
 2. 用本仓库最新的 `custom_components/hotata_airer` 覆盖后，**完全重启** Home Assistant（只重载集成不够，`integration_type` 要重启才会更新）。
-3. 再从 **添加集成** 重新添加。完成后应出现在 **设置 → 设备与服务 → 设备**，设备名带「（反向）」。集成图标使用好太太品牌青绿配色与「好」字标（Home Assistant 2026.3 及以上会显示 `brand/` 目录中的图标）。
+3. 再从 **添加集成** 重新添加。完成后应出现在 **设置 → 设备与服务 → 设备**，设备名带「（反向）」。集成图标使用好太太智联官方 App 图标（缺口圆环 + HOTATA；Home Assistant 2026.3 及以上会显示 `brand/` 目录中的图标）。
 
 ## 要求
 
