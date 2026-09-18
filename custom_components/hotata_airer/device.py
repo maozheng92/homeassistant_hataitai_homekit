@@ -55,3 +55,22 @@ def device_info_for_source(
     if via_device:
         data["via_device"] = via_device
     return DeviceInfo(**data)
+
+
+def async_register_device(
+    hass: HomeAssistant, entry: ConfigEntry, source_entity_id: str
+) -> dr.DeviceEntry:
+    """Register this config entry as its own device, not a helper."""
+    info = device_info_for_source(hass, entry, source_entity_id)
+    kwargs: dict[str, Any] = {
+        "config_entry_id": entry.entry_id,
+        "identifiers": info["identifiers"],
+        "name": info.get("name"),
+        "manufacturer": info.get("manufacturer"),
+        "model": info.get("model"),
+    }
+    if info.get("sw_version"):
+        kwargs["sw_version"] = info["sw_version"]
+    if info.get("via_device"):
+        kwargs["via_device"] = info["via_device"]
+    return dr.async_get(hass).async_get_or_create(**kwargs)

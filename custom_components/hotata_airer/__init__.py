@@ -12,6 +12,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 
 from .const import DOMAIN
+from .device import async_register_device
 
 PLATFORMS: list[Platform] = [Platform.COVER]
 
@@ -27,11 +28,13 @@ def source_entity_id(hass: HomeAssistant, entry: ConfigEntry) -> str:
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up a config entry."""
+    """Set up a config entry and register a real device."""
+    entity_id = source_entity_id(hass, entry)
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = {
-        CONF_ENTITY_ID: source_entity_id(hass, entry),
+        CONF_ENTITY_ID: entity_id,
     }
+    async_register_device(hass, entry, entity_id)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 

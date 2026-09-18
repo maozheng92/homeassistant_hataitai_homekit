@@ -27,10 +27,14 @@ Home Assistant 自定义集成：根据 [Xiaomi Home](https://github.com/XiaoMi/
 2. 将本仓库的 `custom_components/hotata_airer` 复制到 Home Assistant 的 `config/custom_components/hotata_airer`。
 3. 也可以在 HACS 中以自定义仓库方式添加本仓库，类别选 Integration。
 4. 重启 Home Assistant。
-5. 前往 **设置 → 设备与服务 → 添加集成**，搜索 **Hotata Airer D10-ZM** / **好太太晾衣架 D10-ZM**。
+5. 前往 **设置 → 设备与服务 → 添加集成**（不要走「辅助元素 → 创建辅助元素」），搜索 **Hotata Airer D10-ZM** / **好太太晾衣架 D10-ZM**。
 6. 选择米家里 D10-ZM 对应的窗帘实体（配置流程会优先匹配该型号）。
 
-若之前已经添加过本集成，更新后请重载一次，它会从「辅助元素」变成独立设备。
+如果当前还显示在「辅助元素」里：
+
+1. 先在辅助元素里 **删除** 旧条目。
+2. 用本仓库最新的 `custom_components/hotata_airer` 覆盖后，**完全重启** Home Assistant（只重载集成不够，`integration_type` 要重启才会更新）。
+3. 再从 **添加集成** 重新添加。完成后应出现在 **设置 → 设备与服务 → 设备**，设备名带「（反向）」。
 
 ## 要求
 
